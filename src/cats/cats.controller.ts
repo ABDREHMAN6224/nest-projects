@@ -1,16 +1,21 @@
 import { Body, Controller, Get, Param, Post, Res} from '@nestjs/common';
 import { CreateCatDto } from './utils/CreateCat.dto';
 import { Observable, of } from 'rxjs';
+import { CatsService } from './cats/cats.service';
+import { Cat } from './cats/interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
+
+    constructor(private readonly catsService: CatsService) {}
     @Get()
-    findAll() :Observable<string> {
-        return of('This action returns all cats');
+    async findAll() :Promise<Cat[]> {
+        return this.catsService.findAll();
     }
 
     @Post()
-    create(@Body() createCatDto: CreateCatDto,@Res() response) {
+    async create(@Body() createCatDto: CreateCatDto,@Res() response) {
+        this.catsService.create(createCatDto);
         response.status(201).send();
     }
     @Get(":id")
